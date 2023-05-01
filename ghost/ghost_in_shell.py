@@ -1,4 +1,4 @@
-from ghost import imprint
+from ghost.ghost import imprint
 import openai
 imp = imprint.get()
 try:

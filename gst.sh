@@ -23,18 +23,18 @@ choose_platform(){
             case $opt in
                 "Shell")
                     read -p "[Inject] imprint: " imprint_name
-                    python3 ghost_in_shell.py $imprint_name $FORGET
+                    python3 ghost/ghost_in_shell.py $imprint_name $FORGET
                     refresh
                     ;;
 
                 "Telegram")
                     read -p "[Inject] imprint: " imprint_name
-                    python3 ghost_in_telegram.py $imprint_name $FORGET > /dev/null &
+                    python3 ghost/ghost_in_telegram.py $imprint_name $FORGET > /dev/null &
                     refresh
                     ;;
                 "Discord")
                     read -p "[Inject] imprint: " imprint_name
-                    python3 ghost_in_discord.py $imprint_name $FORGET > /dev/null & 
+                    python3 ghost/ghost_in_discord.py $imprint_name $FORGET > /dev/null & 
                     refresh
                     ;;
                 "Back")
@@ -46,18 +46,18 @@ choose_platform(){
     else case $SCRIPT in
         1)
             read -p "[Inject] imprint: " imprint_name
-            python3 ghost_in_shell.py $imprint_name $FORGET
+            python3 ghost/ghost_in_shell.py $imprint_name $FORGET
             refresh
             ;;
 
         2)
             read -p "[Inject] imprint: " imprint_name
-            python3 ghost_in_telegram.py $imprint_name $FORGET > /dev/null &
+            python3 ghost/ghost_in_telegram.py $imprint_name $FORGET > /dev/null &
             refresh
             ;;
         3)
             read -p "[Inject] imprint: " imprint_name
-            python3 ghost_in_discord.py $imprint_name $FORGET > /dev/null & 
+            python3 ghost/ghost_in_discord.py $imprint_name $FORGET > /dev/null & 
             refresh
             ;;
     esac
@@ -71,7 +71,7 @@ refresh(){
     then echo -e "##############|First-Timer? Start with the \033[38;5;33m[Config]\033[0m option|##############"
     fi
     python3 logo.py
-    python3 config.py print_options
+    python3 ghost/config.py print_options
     menu
 }
 config(){
@@ -135,7 +135,7 @@ do
     esac
 done
 }
-python config.py "get_default_script"
+python ghost/config.py "get_default_script"
 DEFAULT_SCRIPT=$?
 echo $DEFAULT_SCRIPT
 refresh

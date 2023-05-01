@@ -1,7 +1,7 @@
 import os
 import sys
 import json
-import utils
+import ghost.utils as utils
 
 config_path = 'config.json'
 env_path = 'config.env'

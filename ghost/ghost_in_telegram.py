@@ -1,5 +1,5 @@
 import openai
-from ghost import imprint
+from ghost.ghost import imprint
 import logging
 from telegram import Update, InputMediaPhoto
 from telegram.constants import ParseMode

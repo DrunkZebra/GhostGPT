@@ -1,6 +1,6 @@
 import discord
 import openai
-from ghost import imprint
+from ghost.ghost import imprint
 intents = discord.Intents(messages=True, message_content = True)
 client = discord.Client(command_prefix='!',intents=intents)
 
