@@ -14,7 +14,8 @@ options = [("OPENAI_KEY", "Paste your Open AI key here", ["Key"]),
  ("TELEGRAM_TOKEN","Paste your telegram token here", ["Key"]),
  ("DISCORD_TOKEN", "Paste your Discord token here",["Key"]),
  ("DEFAULT_SCRIPT", "Pick one of the following to set your default interface", ["Shell", "Telegram", "Discord", "None"]), 
- ("SAVE_SESSION", "Enter true/false if you want Ghost to remember your last session", ["True", "False"]) ]
+ ("SAVE_SESSION", "Enter true/false if you want Ghost to remember your last session", ["True", "False"]),
+  ("MODEL", "Enter the model you want.", ["gpt-3.5-turbo","gpt-4"] )]
 options_list = map(lambda x: x[0], options)
 options_exp = [""]
 
@@ -65,7 +66,7 @@ def fill_options_table(current_vals):
     for option in options:
         prev_val = "None"
         try:
-            prev_val = os.environ[option[0]]
+            prev_val = current_vals[option[0]]
         except:
             pass
         prev_val = "[Hidden]" if option[2][0] == "Key" and prev_val != "None" else prev_val

@@ -4,12 +4,14 @@ from rich.markdown import Markdown
 import os
 import sys
 import tiktoken
+import config
 
 
 console = Console()
 class imprint:
     path = ""
     name = ""
+    model = "gpt-4"
     history = []
     forget = True
     TOKEN_REQUEST_LIMIT = 4096-200
@@ -28,7 +30,8 @@ class imprint:
         if self.printing:
             console.print(obj, **kwargs)
     
-    def __init__(self, name, printing= True):
+    def __init__(self, name, forget, printing= True):
+        self.config = config.get_config()
         self.printing = printing
         self.name = name.upper()
         self.path = os.path.join("IMPRINTS" , name + ".ni")
@@ -38,11 +41,16 @@ class imprint:
         except FileNotFoundError:
             self.wipe()
             self.log("\nCreating a new imprint: " + self.name + " ...")
-       
+        try:
+            self.model = self.config["MODEL"]
+        except KeyError:
+            pass
+        self.forget = forget
+
         self.log("*Note: type [eject] to eject imprint <"+str(self.name)+"> from ghost")
         self.log("Type [delete] to delete the last entry and response from memory.\n")
 
-    def generate(printing = True):
+    def generate(forget, printing = True):
         temp_num = 0
         temp_name = "temp"
         imprints = os.listdir("IMPRINTS")
@@ -50,18 +58,16 @@ class imprint:
         while temp_name in imprints:
             temp_num = temp_num + 1
             temp_name = "temp" + str(temp_num)
-        return imprint(temp_name, printing=printing)
+        return imprint(temp_name, forget, printing=printing)
     
-    def get(printing = True):
+    def get():
         try:
             name = sys.argv[1]
-            imp = imprint(name, printing= printing)
+            forget = bool(sys.argv[2] == "True")
+            
+            imp = imprint(name, forget, printing= True)
         except IndexError:
-            imp = imprint.generate(printing = printing)
-        try:    
-            imp.forget = os.environ["FORGET"] == "True"
-        except KeyError:
-            pass
+            imp = imprint.generate(forget, printing = True)
         return imp
 
     def wipe(self):
@@ -126,16 +132,18 @@ class imprint:
 
         unanswered_history = self.history if self.history is not None else [{'role': 'user', 'content': content}]
         try:
-            if(self.token_est() < self.TOKEN_REQUEST_LIMIT):
+            #if(self.token_est() < self.TOKEN_REQUEST_LIMIT):
                     response = openai.ChatCompletion.create(
-                    model="gpt-3.5-turbo",
+                    model=self.model,
                     messages=list(map(lambda entry: entry if entry["role"][0] != "t" else {'role':'user', 'content':entry['content']}, unanswered_history)),
                     temperature=0,
                     stream=True
                 )
-            else:
-                raise openai.error.InvalidRequestError 
+            # else:
+            #     print(self.history)
+            #     raise openai.error.InvalidRequestError 
         except openai.error.InvalidRequestError:
+   
             if self.history is not None:
                 self.token_outbound_count = self.token_outbound_count + 1
                 diff = self.rm_history(self.token_outbound_count)
@@ -170,7 +178,7 @@ class imprint:
 
     def token_est(self):
         total_token=0
-        encoding = tiktoken.encoding_for_model("gpt-3.5-turbo")
+        encoding = tiktoken.encoding_for_model(self.model)
         for chat in self.history:
             content= chat["content"]
             num_tokens = len(encoding.encode(content))

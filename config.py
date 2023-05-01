@@ -3,8 +3,8 @@ import sys
 import json
 import utils
 
-config_path = 'config/config.json'
-env_path = 'config/config.env'
+config_path = 'config.json'
+env_path = 'config.env'
 command = sys.argv[1]
 
 def config_keys(): 
@@ -84,23 +84,30 @@ def print_options():
         print("No config file found!")
         pass
 
-def set_env():
-    try: 
-        with open(config_path, 'r') as config:
-            config_dict = json.load(config)
-            with open(env_path, 'w') as env:
-                for c in config_dict:
-                    env.write(c + "=" + config_dict[c] + "\n")
-            
-    except (FileNotFoundError, json.decoder.JSONDecodeError):
-        pass
+def get_config():
+    with open (config_path) as config:
+        config_dict = json.load(config)
+    return config_dict
 
-    
-
+def add_term():
+    pass
+def get_default_script():
+    config = get_config()
+    d = (config["DEFAULT_SCRIPT"])
+    default = 0
+    if d == "Shell":
+        default = 1
+    elif d == "Telegram":
+        default = 2
+    elif d == "Discord":
+        default = 3
+    sys.exit(default)
 
 if command=="config":
         config_keys()
 elif command=="print_options":
         print_options()
-elif command == "set_env":
-        set_env()
+elif command == "add_term":
+        add_term()
+elif command == "get_default_script":
+        get_default_script()

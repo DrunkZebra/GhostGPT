@@ -1,17 +1,11 @@
 import discord
-import os
 import openai
+from ghost import imprint
 intents = discord.Intents(messages=True, message_content = True)
 client = discord.Client(command_prefix='!',intents=intents)
-from ghost import imprint
 
-openai.api_key = None
-try:
-    openai.api_key = os.environ["OPENAI_KEY"]
-except KeyError:
-    print("No openAI token found!")
-    exit()
-imp = imprint.get(printing = False)
+imp = imprint.get()
+openai.api_key = imp.config["OPENAI_KEY"]
 @client.event
 async def on_message(message):
     if message.content.startswith("!ghost"):
@@ -21,6 +15,6 @@ async def on_message(message):
         else:
             await message.channel.send(imp.chat(msg))
 try:
-    client.run(os.environ["DISCORD_TOKEN"])
+    client.run(imp.config["DISCORD_TOKEN"])
 except KeyError:
     print("No Discord key has been set!")

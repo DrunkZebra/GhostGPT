@@ -6,23 +6,21 @@ from telegram.constants import ParseMode
 from telegram.helpers import escape_markdown
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 
-import os
-TOKEN= None
-openai.api_key = None
+imp = imprint.get()
 try:
-    openai.api_key = os.environ["OPENAI_KEY"]
+    openai.api_key = imp.config["OPENAI_KEY"]
 except KeyError:
     print("No openAI key found!")
     exit()
 try:
-    TOKEN = os.environ["TELEGRAM_TOKEN"]
+    TOKEN = imp.config["TELEGRAM_TOKEN"]
 except KeyError:
     print("No Telegram token found!")
     exit()
 
-imp = imprint.get(printing = False)
-print("\nInjecting Nerual imprint: "+ str(imp.name)+" ...")
-print("\n*Note: type [eject] to eject imprint <"+str(imp.name)+"> from ghost")
+
+print("\nInjecting Nerual imprint: "+ str(imp.name)+" ... \
+      \n*Note: type [eject] to eject imprint <"+str(imp.name)+"> from ghost")
 
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',

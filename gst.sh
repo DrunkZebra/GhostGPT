@@ -13,8 +13,8 @@ if [ ! -d "IMPRINTS" ]; then
 fi
 
 choose_platform(){
-    SCRIPT=${DEFAULT_SCRIPT-None}
-    if [ "$SCRIPT" == "None" ]; then
+    SCRIPT=${DEFAULT_SCRIPT-0}
+    if [ $SCRIPT == 0 ]; then
         echo "Inject to platform:"
         options=("Shell" "Telegram" "Discord" "Back" )
 
@@ -23,18 +23,18 @@ choose_platform(){
             case $opt in
                 "Shell")
                     read -p "[Inject] imprint: " imprint_name
-                    python3 ghost/ghost_in_shell.py $imprint_name
+                    python3 ghost_in_shell.py $imprint_name $FORGET
                     refresh
                     ;;
 
                 "Telegram")
                     read -p "[Inject] imprint: " imprint_name
-                    python3 ghost/ghost_in_telegram.py $imprint_name > /dev/null &
+                    python3 ghost_in_telegram.py $imprint_name $FORGET > /dev/null &
                     refresh
                     ;;
                 "Discord")
                     read -p "[Inject] imprint: " imprint_name
-                    python3 ghost/ghost_in_discord.py $imprint_name > /dev/null & 
+                    python3 ghost_in_discord.py $imprint_name $FORGET > /dev/null & 
                     refresh
                     ;;
                 "Back")
@@ -44,27 +44,22 @@ choose_platform(){
             esac
         done
     else case $SCRIPT in
-        "Shell")
+        1)
             read -p "[Inject] imprint: " imprint_name
-            python3 ghost/ghost_in_shell.py $imprint_name
+            python3 ghost_in_shell.py $imprint_name $FORGET
             refresh
             ;;
 
-        "Telegram")
+        2)
             read -p "[Inject] imprint: " imprint_name
-            python3 ghost/ghost_in_telegram.py $imprint_name > /dev/null &
+            python3 ghost_in_telegram.py $imprint_name $FORGET > /dev/null &
             refresh
             ;;
-        "Discord")
+        3)
             read -p "[Inject] imprint: " imprint_name
-            python3 ghost/ghost_in_discord.py $imprint_name > /dev/null & 
+            python3 ghost_in_discord.py $imprint_name $FORGET > /dev/null & 
             refresh
             ;;
-        "Back")
-            refresh
-            ;;
-
-        *) echo "invalid option $REPLY";;
     esac
 
     fi
@@ -75,13 +70,13 @@ refresh(){
     if [ ! -e config/config.json ];
     then echo -e "##############|First-Timer? Start with the \033[38;5;33m[Config]\033[0m option|##############"
     fi
-    python3 config/logo.py
-    python3 config/config.py print_options
+    python3 logo.py
+    python3 config.py print_options
     menu
 }
 config(){
     options=("[Install] Required Libs" "[Config] Keys" "[Back]" )
-    echo -e "\033[38;5;33mGhost Version Beta 5.0\033[0m"
+    echo -e "\033[38;5;33mGhost Version Beta 6.0\033[0m"
     select opt in "${options[@]}"
         do
             case $opt in
@@ -103,14 +98,10 @@ config(){
                 *) echo "invalid option $REPLY";;
             esac
         done
-    python3 config/config.py set_env
-    set -o allexport
-    . ./config/config.env
-    rm config/config.env
     }
 
 menu(){
-options=("[Inject] an imprint" "[Train] an imprint" "[Ignore] default script" "[Wipe] an imprint" "[Config]" "[Exit]"  )
+options=("[Inject] an imprint" "[Train] an imprint" "[Ignore] default script" "[Wipe] an imprint" "[Config]" "[Exit]" )
 select opt in "${options[@]}"
 do
     case $opt in
@@ -124,7 +115,7 @@ do
             choose_platform
             ;;
         "[Ignore] default script")
-            DEFAULT_SCRIPT="None"
+            DEFAULT_SCRIPT=0
             refresh
             ;;
         "[Wipe] an imprint")   
@@ -144,8 +135,7 @@ do
     esac
 done
 }
-python3 config/config.py set_env
-set -o allexport
-. ./config/config.env
-rm config/config.env
+python config.py "get_default_script"
+DEFAULT_SCRIPT=$?
+echo $DEFAULT_SCRIPT
 refresh
