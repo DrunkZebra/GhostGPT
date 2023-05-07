@@ -1,10 +1,10 @@
 import os
 import sys
 import json
-import ghost.utils as utils
+import utils
 
-config_path = 'config.json'
-env_path = 'config.env'
+config_path = 'ghost' + os.sep + 'config.json'
+
 command = sys.argv[1]
 
 def config_keys(): 
@@ -82,6 +82,7 @@ def print_options():
             utils.options_table_print()
     except (FileNotFoundError, json.decoder.JSONDecodeError):
         print("No config file found!")
+        print(os.listdir())
         pass
 
 def get_config():
@@ -89,8 +90,7 @@ def get_config():
         config_dict = json.load(config)
     return config_dict
 
-def add_term():
-    pass
+
 def get_default_script():
     config = get_config()
     d = (config["DEFAULT_SCRIPT"])
@@ -107,7 +107,5 @@ if command=="config":
         config_keys()
 elif command=="print_options":
         print_options()
-elif command == "add_term":
-        add_term()
 elif command == "get_default_script":
         get_default_script()

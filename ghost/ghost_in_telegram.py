@@ -1,12 +1,12 @@
 import openai
-from ghost.ghost import imprint
+import ghost
 import logging
 from telegram import Update, InputMediaPhoto
 from telegram.constants import ParseMode
 from telegram.helpers import escape_markdown
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 
-imp = imprint.get()
+imp = ghost.imprint.get()
 try:
     openai.api_key = imp.config["OPENAI_KEY"]
 except KeyError:

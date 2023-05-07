@@ -1,10 +1,10 @@
 import discord
 import openai
-from ghost.ghost import imprint
+import ghost
 intents = discord.Intents(messages=True, message_content = True)
 client = discord.Client(command_prefix='!',intents=intents)
 
-imp = imprint.get()
+imp = ghost.imprint.get()
 openai.api_key = imp.config["OPENAI_KEY"]
 @client.event
 async def on_message(message):

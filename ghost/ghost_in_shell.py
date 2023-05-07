@@ -1,6 +1,6 @@
-from ghost.ghost import imprint
+import ghost
 import openai
-imp = imprint.get()
+imp = ghost.imprint.get()
 try:
     openai.api_key = imp.config["OPENAI_KEY"]
 except KeyError:
